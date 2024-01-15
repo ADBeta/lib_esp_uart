@@ -8,15 +8,38 @@
 * You should have received a copy of the GNU General Public License along with
 * this program; if not, see www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 *
-* ADBeta (c) 2024    Ver 0.0.1    12 Jan 2024
+* ADBeta (c) 2024    Ver 0.1.3    15 Jan 2024
 *******************************************************************************/
 #ifndef LIB_ESP_UART
 #define LIB_ESP_UART
 
 #include "driver/uart.h"
 
+/*** Structs ******************************************************************/
+//UART Handler struct used for hardware level control
+typedef struct {
+	uart_port_t port;
+	int tx_io;
+	int rx_io;
+	uint32_t baudrate;
+	int rx_buff;
+	int tx_buff;
+	uint16_t timeout;        //Timeout before giving up reading (milliseconds)
+} uart_handler_t;
 
+/*** Functions ****************************************************************/
+//Initialises a UART port, returns error if not successful
+esp_err_t UART_Init(const uart_handler_t *uart);
 
+//Prints a null terminated string to the UART port.
+//PrintNewline sends \n\r after the string.
+//Returns total number of bytes sent
+int UART_Print(const uart_handler_t *uart, const char *str);
+int UART_PrintNewline(const uart_handler_t *uart, const char *str);
+
+//Reads a string from a UART Port into a buffer string
+//Takes a UART Handler, a pointer to a string buffer, and a max length
+void UART_ReceiveString(const uart_handler_t *, char *, const size_t);
 
 
 #endif

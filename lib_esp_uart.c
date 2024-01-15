@@ -15,20 +15,8 @@
 #include "driver/uart.h"
 #include <string.h>
 
-/*** Structs ******************************************************************/
-//UART Handler struct used for hardware level control
-typedef struct {
-	uart_port_t port;
-	int tx_io;
-	int rx_io;
-	uint32_t baudrate;
-	int rx_buff;
-	int tx_buff;
-	uint16_t timeout;        //Timeout before giving up reading (milliseconds)
-} uart_handler_t;
-
 /*** UART Functions ***********************************************************/
-static esp_err_t UART_Init(const uart_handler_t *uart)
+esp_err_t UART_Init(const uart_handler_t *uart)
 {
 	//Create a config struct
 	const uart_config_t config = {
@@ -63,28 +51,22 @@ static esp_err_t UART_Init(const uart_handler_t *uart)
 	return sta;
 }
 
-static esp_err_t UART_Print(const uart_handler_t *uart, const char *str)
+int UART_Print(const uart_handler_t *uart, const char *str)
 {
 	return uart_write_bytes(uart->port, str, strlen(str));
 }
 
-static esp_err_t UART_PrintNewline(const uart_handler_t *uart, const char *str)
+int UART_PrintNewline(const uart_handler_t *uart, const char *str)
 {
-	esp_err_t sta = uart_write_bytes(uart->port, str, strlen(str));
-	if(sta == ESP_OK) sta = uart_write_bytes(uart->port, "\r\n", 2);
-	return sta;
+	int bytes_sent = uart_write_bytes(uart->port, str, strlen(str));
+	bytes_sent += uart_write_bytes(uart->port, "\r\n", 2);
+	return bytes_sent;
 }
 
-static void UART_ReceiveString(const uart_handler_t *uart, char *str, 
-                                                               const size_t len)
+void UART_ReceiveString(const uart_handler_t *uart, char *str, const size_t len)
 {
 	const size_t bytes_read = uart_read_bytes(uart->port, str, len - 1, 
 	                                        uart->timeout / portTICK_PERIOD_MS);	
 	//Terminate the string
 	str[bytes_read] = '\0';
 }
-
-/*** AT Commands **************************************************************/
-
-
-
