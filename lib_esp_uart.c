@@ -70,3 +70,17 @@ void UART_ReceiveString(const uart_handler_t *uart, char *str, const size_t len)
 	//Terminate the string
 	str[bytes_read] = '\0';
 }
+
+void UART_WaitForResponse(const uart_handler_t *uart, const char *req, 
+						                          char *resp, const size_t wait)
+{
+	//Write the request string out
+	uart_write_bytes(uart->port, req, strlen(req));
+	
+
+
+	//const size_t bytes_read = uart_read_bytes(uart->port, , len - 1, 
+	//                                       uart->timeout / portTICK_PERIOD_MS);	
+	//Terminate the string
+	//str[bytes_read] = '\0';
+}
