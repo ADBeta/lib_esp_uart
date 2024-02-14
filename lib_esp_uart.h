@@ -8,7 +8,7 @@
 * You should have received a copy of the GNU General Public License along with
 * this program; if not, see www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 *
-* ADBeta (c) 2024    Ver 0.3.1    17 Jan 2024
+* ADBeta (c) 2024    Ver 0.4.11    14 Feb 2024
 *******************************************************************************/
 #ifndef LIB_ESP_UART
 #define LIB_ESP_UART
@@ -41,10 +41,11 @@ int UART_PrintNewline(const uart_handler_t *uart, const char *str);
 //Takes a UART Handler, a pointer to a string buffer, and a max length
 void UART_ReceiveString(const uart_handler_t *uart, char *str, const size_t len);
 
-//Sends a request string and waits until the UART responds, and will only exit
-//when the UART stops transmitting, or until the string length limit is hit.
-//Timeout is a multiple of 0.1 seconds. 0 to disable
+//Sends a request string to the UART, and will wait until it responds for
+//[waits] number of cycles. Each cycle waits for uart->timeout length.
+//Will exit when the buffer is full or a response is given.
+//NOTE: DO not use, this is in testing and development
 void UART_WaitForResponse(const uart_handler_t *uart, const char *req, 
-                            char *resp, const size_t len, const size_t timeout);
+                            char *resp, const size_t len, const size_t waits);
 
 #endif
